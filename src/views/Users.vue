@@ -26,7 +26,14 @@
 
     <v-container fluid>
       <v-card>
-        <v-card-title>Manage Users</v-card-title>
+        <v-card-title
+          >Manage Users
+          <v-spacer></v-spacer>
+          <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+            New Item
+          </v-btn>
+        </v-card-title>
+
         <template>
           <v-data-table
             :headers="headers"
@@ -70,6 +77,7 @@ export default {
       ],
       users: [],
       dialog: false,
+      dialogDelete: false,
     };
   },
   created() {
