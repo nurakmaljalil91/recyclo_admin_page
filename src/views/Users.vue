@@ -2,24 +2,6 @@
   <div class="users">
     <Drawer />
 
-    <div class="text-center">
-      <v-dialog v-model="dialog" width="500">
-        <v-card>
-          <v-card-title class="headline grey lighten-2">
-            Delete User?
-          </v-card-title>
-
-          <v-divider></v-divider>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialog = false"> Yes </v-btn>
-            <v-btn color="red" text @click="dialog = false"> No </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </div>
-
     <v-container fluid>
       <v-card>
         <v-card-title
@@ -33,7 +15,7 @@
             </template>
             <v-card>
               <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
+                <span class="headline">{{ formTitle }} </span>
               </v-card-title>
 
               <v-card-text>
@@ -72,7 +54,9 @@
                 <v-btn color="blue darken-1" text @click="close">
                   Cancel
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+                <v-btn color="blue darken-1" text @click="save">
+                  Save
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -82,7 +66,7 @@
           <v-data-table
             :headers="headers"
             :items="users"
-            :items-per-page="5"
+            :items-per-page="20"
             class="elevation-1"
           >
             <template v-slot:[`item.actions`]="{ item }">
@@ -101,6 +85,7 @@
 <script>
 import { db } from "../firebaseDb";
 import Drawer from "@/components/Drawer";
+
 export default {
   components: {
     Drawer,
@@ -122,8 +107,9 @@ export default {
       users: [],
       dialog: false,
       dialogDelete: false,
-      editedIndex: -1,
+      editedIndex: "-1",
       editedUser: {
+        id: "",
         username: "",
         password: "",
         email: "",
@@ -148,33 +134,25 @@ export default {
           password: doc.data().password,
           points: doc.data().points,
         });
+        // console.log(this.users)
       });
     });
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "New User" : "Edit User";
-    },
-  },
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
+      return this.editedIndex === "-1" ? "New User" : "Edit User";
     },
   },
   methods: {
-    newUser() {},
     editUser(docId) {
-      this.users.forEach(element => {
-        if(element.id == docId){
+      this.users.forEach((element) => {
+        if (element.id == docId) {
           this.editedIndex = docId;
           console.log(this.editedIndex);
         }
       });
-      this.editedUser = Object.assign({}, docId)
-      this.dialog = true
+      this.editedUser.id = docId;
+      this.dialog = true;
     },
     deleteUser(id) {
       db.collection("users")
@@ -189,19 +167,71 @@ export default {
     },
     close() {
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+      this.editedIndex = "-1";
+      this.editedUser.id = "";
+      this.editedUser.username = "";
+      this.editedUser.password = "";
+      this.editedUser.email = "";
+      this.editedUser.points = 0;
     },
 
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+    save() {
+      if (this.editedIndex == "-1") {
+        db.collection("users")
+          .add({
+            username: this.editedUser.username,
+            password: this.editedUser.password,
+            email: this.editedUser.email,
+            points: this.editedUser.points,
+          })
+          .then(() => {
+            console.log("Document written with ID: ");
+            db.collection("users").onSnapshot((snapshotChange) => {
+              this.users = [];
+              snapshotChange.forEach((doc) => {
+                this.users.push({
+                  id: doc.id,
+                  username: doc.data().username,
+                  email: doc.data().email,
+                  password: doc.data().password,
+                  points: doc.data().points,
+                });
+              });
+            });
+          })
+          .catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
       } else {
-        this.desserts.push(this.editedItem)
+        db.collection("users")
+          .doc(this.editedIndex)
+          .set({
+            username: this.editedUser.username,
+            password: this.editedUser.password,
+            email: this.editedUser.email,
+            points: this.editedUser.points,
+          })
+          .then(() => {
+            console.log("Document");
+            db.collection("users").onSnapshot((snapshotChange) => {
+              this.users = [];
+              snapshotChange.forEach((doc) => {
+                this.users.push({
+                  id: doc.id,
+                  username: doc.data().username,
+                  email: doc.data().email,
+                  password: doc.data().password,
+                  points: doc.data().points,
+                });
+              });
+            });
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
       }
-      this.close()
+
+      this.close();
     },
   },
 };
