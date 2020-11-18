@@ -45,6 +45,12 @@
                         label="Points"
                       ></v-text-field>
                     </v-col>
+                     <v-col cols="12">
+                      <v-text-field
+                        v-model="editedUser.imageurl"
+                        label="ImageUrl"
+                      ></v-text-field>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -102,6 +108,7 @@ export default {
         { text: "Password", value: "password" },
         { text: "Email", value: "email" },
         { text: "Points", value: "points" },
+        { text: "Image Url", value: "imageurl" },
         { text: "Actions", value: "actions", sortable: false },
       ],
       users: [],
@@ -114,12 +121,14 @@ export default {
         password: "",
         email: "",
         points: 0,
+        imageurl: "",
       },
       defaultUser: {
         username: "",
         password: "",
         email: "",
         points: 0,
+        imageurl: "",
       },
     };
   },
@@ -133,6 +142,7 @@ export default {
           email: doc.data().email,
           password: doc.data().password,
           points: doc.data().points,
+          imageurl: doc.data().imageurl,
         });
         // console.log(this.users)
       });
@@ -173,6 +183,7 @@ export default {
       this.editedUser.password = "";
       this.editedUser.email = "";
       this.editedUser.points = 0;
+      this.editedUser.imageurl = "";
     },
 
     save() {
@@ -183,6 +194,7 @@ export default {
             password: this.editedUser.password,
             email: this.editedUser.email,
             points: this.editedUser.points,
+            imageurl: this.editedUser.imageurl,
           })
           .then(() => {
             console.log("Document written with ID: ");
@@ -195,6 +207,7 @@ export default {
                   email: doc.data().email,
                   password: doc.data().password,
                   points: doc.data().points,
+                  imageurl: doc.data().imageurl,
                 });
               });
             });
@@ -210,6 +223,7 @@ export default {
             password: this.editedUser.password,
             email: this.editedUser.email,
             points: this.editedUser.points,
+            imageurl: this.editedUser.imageurl,
           })
           .then(() => {
             console.log("Document");
@@ -222,6 +236,7 @@ export default {
                   email: doc.data().email,
                   password: doc.data().password,
                   points: doc.data().points,
+                  imageurl: doc.data().imageurl,
                 });
               });
             });

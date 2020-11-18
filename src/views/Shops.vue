@@ -46,6 +46,12 @@
                         label="Quantity"
                       ></v-text-field>
                     </v-col>
+                     <v-col cols="12">
+                      <v-text-field
+                        v-model="editedShop.imageurl"
+                        label="ImageUrl"
+                      ></v-text-field>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -100,6 +106,7 @@ export default {
         { text: "Price", value: "price" },
         { text: "Discount", value: "discount" },
         { text: "Quantity", value: "quantity" },
+        { text: "Image Url", value: "imageurl" },
         { text: "Actions", value: "actions", sortable: false },
       ],
       shops: [],
@@ -112,6 +119,7 @@ export default {
         price: 0,
         discount: 0,
         quatity: 0,
+        imageurl: ""
       },
     };
   },
@@ -130,6 +138,7 @@ export default {
           price: doc.data().price,
           discount: doc.data().discount,
           quantity: doc.data().quatity,
+          imageurl: doc.data().imageurl,
         });
       });
     });
@@ -150,6 +159,7 @@ export default {
                 price: doc.data().price,
                 discount: doc.data().discount,
                 quantity: doc.data().quatity,
+                imageurl: doc.data().imageurl,
               });
             });
           });
@@ -177,6 +187,7 @@ export default {
       this.editedShop.price = 0;
       this.editedShop.discount = 0;
       this.editedShop.quatity = 0;
+      this.editedShop.imageurl = "";
      
     },
 
@@ -191,6 +202,7 @@ export default {
             price: parseInt(this.editedShop.price),
             discount: parseInt(this.editedShop.discount),
             quatity: parseInt(this.editedShop.quatity),
+            imageurl: this.editedShop.imageurl,
         
           })
           .then(() => {
@@ -204,6 +216,7 @@ export default {
                   price: doc.data().price,
                   discount: doc.data().discount,
                   quantity: doc.data().quatity,
+                  imageurl: doc.data().imageurl,
                 });
               });
             });
@@ -221,6 +234,7 @@ export default {
             price: parseInt(this.editedShop.price),
             discount: parseInt(this.editedShop.discount),
             quatity: parseInt(this.editedShop.quatity),
+            imageurl: this.editedShop.imageurl
             
           })
           .then(() => {
@@ -234,6 +248,7 @@ export default {
                   price: doc.data().price,
                   discount: doc.data().discount,
                   quantity: doc.data().quatity,
+                  imageurl: doc.data().imageurl,
                 });
               });
             });
