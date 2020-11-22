@@ -63,6 +63,8 @@ export default {
           path: "/users",
         },
         { title: "Manage Shops", icon: "mdi-basket", path: "/shops" },
+        { title: "Manage Wastes", icon: "mdi-basket", path: "/wastes" },
+        { title: "Generate Reports", icon: "mdi-basket", path: "/reports" }
       ],
       mini: null,
     };
