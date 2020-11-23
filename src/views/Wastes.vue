@@ -28,16 +28,50 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
-                        v-model="editedwaste.date"
-                        label="date"
-                      ></v-text-field>
+                      <v-menu
+                        ref="menu"
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :return-value.sync="dates"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-combobox
+                            v-model="editedwaste.date"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-combobox>
+                        </template>
+                        <v-date-picker
+                          v-model="editedwaste.date"
+                          multiple
+                          no-title
+                          scrollable
+                        >
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="$refs.menu.save(editedwaste.date)"
+                          >
+                            OK
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field
+                      <v-select
+                        :items="items"
                         v-model="editedwaste.status"
                         label="status"
-                      ></v-text-field>
+                      ></v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -48,9 +82,7 @@
                 <v-btn color="blue darken-1" text @click="close">
                   Cancel
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="save">
-                  Save
-                </v-btn>
+                <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -112,6 +144,8 @@ export default {
         date: "",
         status: "",
       },
+      items: ["In Process", "Collections", "Process"],
+      menu: false,
     };
   },
   created() {
@@ -186,7 +220,7 @@ export default {
               });
             });
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error("Error adding document: ", error);
           });
       } else {
@@ -211,7 +245,7 @@ export default {
               });
             });
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error(error);
           });
       }

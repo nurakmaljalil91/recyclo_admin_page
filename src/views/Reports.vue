@@ -11,7 +11,7 @@
       :enable-download="true"
       :preview-modal="true"
       :paginate-elements-by-height="2000"
-      filename="hee hee"
+      filename="report"
       :pdf-quality="2"
       :manual-pagination="false"
       pdf-format="a4"
@@ -54,7 +54,7 @@
                     <v-col cols="6">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="reports[0].employee_name"
                         outlined
                         class="mx-4"
                       ></v-text-field>
@@ -62,7 +62,7 @@
                     <v-col cols="6">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="reports[0].week"
                         outlined
                         class="mr-4"
                       ></v-text-field>
@@ -83,28 +83,28 @@
                     <v-col cols="4">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="reports[0].item_name"
                         outlined
                         class="mx-4"
-                        disabled
+                        
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="reports[0].item_quantity"
                         outlined
                         class="mr-4"
-                        disabled
+                        
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="reports[0].item_status"
                         outlined
                         class="mr-4"
-                        disabled
+                        
                       ></v-text-field>
                     </v-col>
                   </v-row>
@@ -116,8 +116,8 @@
                       <v-textarea
                         outlined
                         name="input-7-1"
-                        value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
-                        hint="Hint text"
+                        v-model="reports[0].completed_task"
+                        
                         class="mx-4"
                       ></v-textarea>
                     </v-col>
@@ -128,8 +128,7 @@
                       <v-textarea
                         outlined
                         name="input-7-1"
-                        value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
-                        hint="Hint text"
+                        v-model="reports[0].ongoing_task"
                         class="mx-4"
                       ></v-textarea>
                     </v-col>
@@ -140,29 +139,24 @@
                       <v-textarea
                         outlined
                         name="input-7-1"
-                        value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
-                        hint="Hint text"
+                        v-model="reports[0].task_for_next_week"
                         class="mx-4"
                       ></v-textarea>
                     </v-col>
                   </v-row>
                   <v-row no-gutters>
                     <v-col cols="8">
-                      <h3 class="mx-4">
-                        Approved By
-                      </h3>
+                      <h3 class="mx-4">Approved By</h3>
                     </v-col>
                     <v-col cols="4">
-                      <h3 class="mx-4">
-                        Date
-                      </h3>
+                      <h3 class="mx-4">Date</h3>
                     </v-col>
                   </v-row>
                   <v-row no-gutters>
                     <v-col cols="8">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        placeholder="Danial"
                         outlined
                         class="mx-4"
                       ></v-text-field>
@@ -170,7 +164,7 @@
                     <v-col cols="4">
                       <v-text-field
                         dense
-                        placeholder="Nan"
+                        v-model="date"
                         outlined
                         class="mr-4"
                       ></v-text-field
@@ -195,6 +189,7 @@
 <script>
 import Drawer from "@/components/Drawer";
 import VueHtml2pdf from "vue-html2pdf";
+import { db } from "../firebaseDb";
 export default {
   components: {
     Drawer,
@@ -203,7 +198,28 @@ export default {
   data() {
     return {
       showLayout: false,
+      reports: [],
+      date: new Date()
     };
+  },
+  async mounted (){
+    db.collection("reports").onSnapshot((snapshotChange) => {
+      this.reports = [];
+      snapshotChange.forEach((doc) => {
+        this.reports.push({
+          id: doc.id,
+          employee_name: doc.data().employee_name,
+          week: doc.data().week,
+          item_name: doc.data().item_name,
+          item_quantity: doc.data().item_quantity,
+          item_status: doc.data().item_status,
+          ongoing_task: doc.data().ongoing_task,
+          task_for_next_week: doc.data().tasK_for_next_week,
+          completed_task: doc.data().completed_task
+        });
+        console.log(this.reports)
+      });
+    });
   },
   methods: {
     generateReport() {
